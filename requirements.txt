@@ -1,0 +1,22 @@
+# requirements.txt — for Streamlit Community Cloud deployment.
+#
+# Streamlit Cloud prefers requirements.txt over pyproject.toml when both
+# exist, which dodges the Poetry resolver's "streamlit ≠ Python 3.9.7"
+# unsatisfiable-constraint blowup.
+#
+# Local development still uses pyproject.toml's [project.optional-dependencies]
+# (e.g. pip install -e '.[all]').
+
+# Core analyzer
+mecab-python3>=1.0
+pyahocorasick>=2.0
+typer>=0.9
+
+# Streamlit app stack
+streamlit>=1.30
+plotly>=5.0
+pandas>=2.0
+
+# Install the local mlask_official package itself.  Streamlit Cloud
+# runs this from the repo root, so '.' = the package.
+.
