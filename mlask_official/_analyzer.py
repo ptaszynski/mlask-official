@@ -124,7 +124,11 @@ _RE_CVS = (
     "|少しもない|今一つない|今いちない|言えるない|いえるない|行かん|あかん|いかん"
     "|なくても?良い|てはだめ|[ちじ]ゃだめ|余りない|絶対ない|全くない|今一ない"
     "|全然ない|もんか|ものか|あるますん|ない|いない|思うない|思えるない"
-    "|ありません|ありませんでした|ませんでした|ません|なかった|なくて"
+    # Polite negation.  Accept both surface (ありません) and lemma (あるません)
+    # forms because IPADIC lemmatises ある→ある (not ari), so a sentence like
+    # 嫌いではありません produces lemma_all '嫌いだはあるません' after our
+    # aux-lemma normalisation.
+    "|あ[るり]ません|あ[るり]ませんでした|ませんでした|ません|なかった|なくて"
     "|訳[がだではもならじゃに]*ない|わけ[がだではもならじゃに]*ない"
 )
 RE_CVS_SUFFIX = re.compile(f"(?:{_RE_PARTICLES})(?:{_RE_CVS})")
@@ -132,6 +136,39 @@ RE_CVS_SUFFIX = re.compile(f"(?:{_RE_PARTICLES})(?:{_RE_CVS})")
 # Negation lemmas used by the dependency-tree CVS (5.1.4).  Surface text isn't
 # checked there; we look up token lemmas directly in this set.
 _DEP_CVS_NEG_LEMMAS = frozenset(("ない", "ぬ", "ん", "ねぇ", "ねえ", "ぬか"))
+
+# Aux-verb lemma normalisations applied to lemma_all before CVS regex matching.
+#
+# Some MeCab + IPADIC builds emit the kanji form (e.g. ``無い`` instead of
+# ``ない``, ``居ない`` instead of ``いない``) for the negation auxiliary
+# verb.  The CVS regex above is written against the kana forms — the canonical
+# IPADIC dictionary form — so we normalise the lemma string ahead of matching.
+#
+# This only affects the string fed to the CVS regex; the original lemma_words
+# (used for displayed matches) is untouched.
+_AUX_LEMMA_NORMALISATIONS = (
+    ("無い",      "ない"),
+    ("無かった",  "なかった"),
+    ("無くて",    "なくて"),
+    ("無く",      "なく"),
+    ("居ない",    "いない"),
+    ("為る",      "する"),
+    # 〜ありません / 〜ません — IPADIC lemmatises the polite negative
+    # auxiliary ん to ず (or sometimes ぬ), and the verb ある to 有る.
+    # Together they produce '有るますず' etc.  Normalise so the kana
+    # CVS patterns (ありません / ません / なかった) match.
+    ("有る",      "ある"),
+    ("ますず",    "ません"),
+    ("ますん",    "ません"),
+    ("ませず",    "ません"),
+    ("ませぬ",    "ません"),
+)
+
+
+def _normalise_aux_lemmas(s: str) -> str:
+    for kanji, kana in _AUX_LEMMA_NORMALISATIONS:
+        s = s.replace(kanji, kana)
+    return s
 
 _BRACKET = r"\[|\(|\（|\【|\{|\〈|\［|\｛|\＜|\｜|\|"
 _EMOTICON_CHARS = (
@@ -856,10 +893,10 @@ class MLAskOfficial:
                 scanned_w_idx = end_to_word_idx[end_idx]
                 full_w_idx = word_idx_map[scanned_w_idx]
                 full_end_offset = cvs_word_end_offsets[full_w_idx]
-                after = cvs_text[full_end_offset + 1:]
+                after = _normalise_aux_lemmas(cvs_text[full_end_offset + 1:])
                 has_cvs = bool(RE_CVS_SUFFIX.match(after))
             elif check_cvs:
-                after = text[end_idx + 1:]
+                after = _normalise_aux_lemmas(text[end_idx + 1:])
                 has_cvs = bool(RE_CVS_SUFFIX.match(after))
 
             for raw_word, emotion_classes in entries:

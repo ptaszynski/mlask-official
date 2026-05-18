@@ -19,12 +19,11 @@ build:
 
 requirements:
   host:
-    - python >=3.9
+    - python >=3.10
     - pip
-    - setuptools >=68
-    - wheel
+    - setuptools >=77
   run:
-    - python >=3.9
+    - python >=3.10
     - mecab-python3 >=1.0
     - pyahocorasick >=2.0
     - typer >=0.9
@@ -38,18 +37,18 @@ test:
     - pip
 
 about:
-  home: https://github.com/michalptaszynski/mlask-official
-  license: BSD-2-Clause
-  license_file: LICENSE.txt
+  home: https://github.com/ptaszynski/mlask-official
+  license: BSD-3-Clause
+  license_file: LICENSE
   summary: "ML-Ask Official — high-performance Japanese emotion analysis"
   description: |
     eMotive eLement and Expression Analysis system (ML-Ask) — official Python
     rewrite by the original author.  Keyword-based affect annotation for
     Japanese utterances using dual Aho-Corasick automata, Russell's 2D
     circumplex model, and Plutchik's wheel colour palette.
-  dev_url: https://github.com/michalptaszynski/mlask-official
-  doc_url: https://github.com/michalptaszynski/mlask-official#readme
+  dev_url: https://github.com/ptaszynski/mlask-official
+  doc_url: https://github.com/ptaszynski/mlask-official#readme
 
 extra:
   recipe-maintainers:
-    - michalptaszynski
+    - ptaszynski

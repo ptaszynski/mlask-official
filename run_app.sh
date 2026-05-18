@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
-# Run ML-Ask Official v0.5 using the shared venv from mlask43-simple-noregex/
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-VENV="$SCRIPT_DIR/../mlask43-simple-noregex/.venv"
+# ML-Ask Official — convenience launcher for the Streamlit web app.
+#
+# Prerequisites:
+#   pip install 'mlask-official[app]'      # PyPI
+#   pip install -e '.[app]'                 # source checkout
+#
+# Pass any extra `streamlit run` flags through, e.g.
+#   bash run_app.sh --server.port 8505
+set -e
 
-if [ ! -f "$VENV/bin/streamlit" ]; then
-    echo "Error: venv not found at $VENV"
-    echo "Run 'pip install -e \".[app]\"' inside the venv first."
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+if ! command -v streamlit >/dev/null 2>&1; then
+    echo "Error: 'streamlit' was not found on PATH."
+    echo "Install the app extra first:"
+    echo "    pip install 'mlask-official[app]'"
     exit 1
 fi
 
-PYTHONPATH="$SCRIPT_DIR" "$VENV/bin/streamlit" run \
-    "$SCRIPT_DIR/streamlit_app.py" --server.headless true "$@"
+exec streamlit run "$SCRIPT_DIR/streamlit_app.py" --server.headless true "$@"

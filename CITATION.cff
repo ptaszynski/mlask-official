@@ -16,9 +16,9 @@ authors:
     given-names: Kenji
   - family-names: Masui
     given-names: Fumito
-license: BSD-2-Clause
-url: "https://github.com/michalptaszynski/mlask-official"
-repository-code: "https://github.com/michalptaszynski/mlask-official"
+license: BSD-3-Clause
+url: "https://github.com/ptaszynski/mlask-official"
+repository-code: "https://github.com/ptaszynski/mlask-official"
 keywords:
   - japanese
   - nlp

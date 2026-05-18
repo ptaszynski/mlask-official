@@ -4,17 +4,15 @@ Version: 0.5.0
 Summary: ML-Ask Official — high-performance Japanese emotion analysis (original system, Python rewrite)
 Author-email: Michal Ptaszynski <ptaszynski@ieee.org>
 Maintainer-email: Michal Ptaszynski <ptaszynski@ieee.org>
-License: BSD-2-Clause
-Project-URL: Homepage, https://github.com/michalptaszynski/mlask-official
-Project-URL: Bug Tracker, https://github.com/michalptaszynski/mlask-official/issues
-Project-URL: Changelog, https://github.com/michalptaszynski/mlask-official/blob/main/CHANGELOG.md
-Project-URL: Citation, https://github.com/michalptaszynski/mlask-official/blob/main/CITATION.cff
+License-Expression: BSD-3-Clause
+Project-URL: Homepage, https://github.com/ptaszynski/mlask-official
+Project-URL: Bug Tracker, https://github.com/ptaszynski/mlask-official/issues
+Project-URL: Changelog, https://github.com/ptaszynski/mlask-official/blob/main/CHANGELOG.md
+Project-URL: Citation, https://github.com/ptaszynski/mlask-official/blob/main/CITATION.cff
 Keywords: nlp,japanese,emotion,sentiment,affect,ml-ask,affective-computing
 Classifier: Development Status :: 4 - Beta
 Classifier: Intended Audience :: Science/Research
-Classifier: License :: OSI Approved :: BSD Software License
 Classifier: Programming Language :: Python :: 3
-Classifier: Programming Language :: Python :: 3.9
 Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Classifier: Programming Language :: Python :: 3.12
@@ -23,8 +21,9 @@ Classifier: Topic :: Text Processing :: Linguistic
 Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
 Classifier: Natural Language :: Japanese
 Classifier: Operating System :: OS Independent
-Requires-Python: >=3.9
+Requires-Python: >=3.10
 Description-Content-Type: text/markdown
+License-File: LICENSE
 Requires-Dist: mecab-python3>=1.0
 Requires-Dist: pyahocorasick>=2.0
 Requires-Dist: typer>=0.9
@@ -47,121 +46,136 @@ Requires-Dist: pandas>=2.0; extra == "all"
 Requires-Dist: fugashi[unidic-lite]>=1.3; extra == "all"
 Requires-Dist: ginza>=5.1; extra == "all"
 Requires-Dist: ja-ginza>=5.1; extra == "all"
+Dynamic: license-file
 
-# ML-Ask Official v0.5
+# ML-Ask Official
 
-**eMotive eLement and Expression Analysis system — official Python rewrite**
+**eMotive eLement and Expression Analysis system — official Python rewrite by the original author.**
 
-High-performance Japanese emotion analysis. Original ML-Ask system by Michal Ptaszynski, Pawel Dybala, Rafal Rzepka and Kenji Araki.
+[![PyPI version](https://img.shields.io/pypi/v/mlask-official.svg)](https://pypi.org/project/mlask-official/)
+[![Python versions](https://img.shields.io/pypi/pyversions/mlask-official.svg)](https://pypi.org/project/mlask-official/)
+[![License: BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE)
+[![Streamlit demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://mlask-official.streamlit.app/)
+
+High-performance Japanese emotion analysis.  Originally developed by
+Michal Ptaszynski, Pawel Dybala, Rafal Rzepka and Kenji Araki at Hokkaido
+University, the system was first described in
+Ptaszynski et al. (2017, *Journal of Open Research Software*) and extended with
+new dictionaries in Wang et al. (2024, *Applied Sciences*).  This package is
+the official Python implementation maintained by the original author.
+
+- 📦 **PyPI:** <https://pypi.org/project/mlask-official/>
+- 🧪 **Hosted demo:** <https://mlask-official.streamlit.app/>
+- 🐙 **Source + issues:** <https://github.com/ptaszynski/mlask-official>
+- 📝 **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+- 🗺️ **Roadmap:** [IMPROVEMENTS.md](IMPROVEMENTS.md)
+- 📚 **Citation file:** [CITATION.cff](CITATION.cff)
+
+---
+
+## Quick start
+
+```bash
+# 1. system MeCab + IPADIC (macOS shown; see Installation for other OSes)
+brew install mecab mecab-ipadic
+
+# 2. the package
+pip install 'mlask-official[app]'
+
+# 3. analyze a sentence
+python -c "from mlask_official import MLAskOfficial; \
+print(MLAskOfficial().analyze('彼のことは嫌いではない！')['valence'])"
+# → POSITIVE
+```
+
+CLI and web app both ship in the same install:
+
+```bash
+echo "腹が立つ" | mlask analyze --format pipe
+streamlit run streamlit_app.py     # from a source checkout
+```
 
 ---
 
 ## About ML-Ask
 
-ML-Ask (*eMotive eLement and Expression Analysis system*) is a keyword-based rule
-system for automatic affect annotation of Japanese utterances.
+ML-Ask (*eMotive eLement and Expression Analysis system*) is a keyword-based
+rule system for automatic affect annotation of Japanese utterances.  It
+combines a curated lexicon of ~4,700 emotive expressions across 10 categories
+with a particle-stripped content-form pass and a Contextual Valence Shifter
+(CVS) layer for negation.
 
 ---
 
 ## Features
 
-- **Combined and expanded dictionaries** — Nakamura's original *Dictionary of Emotive
-  Expressions* merged with the Wang & Isomura (2024) two-dictionary expansion
-  (Hiejima's and Murakami's emotion dictionaries, plus automatically extracted
-  expressions). Total: ~4,700 entries across 10 emotion classes.
-- **Russell's 2D circumplex model** of affect — every emotion class is located on
-  a (valence, arousal) plane, and aggregate sentence orientation is reported as
-  `valence` (POSITIVE / NEGATIVE / NEUTRAL, optionally `mostly_*`) and `activation`
-  (ACTIVE / PASSIVE / NEUTRAL).
-- **Plutchik-wheel colour palette** — all 10 emotion classes are colour-coded by the
-  hue angles of Plutchik's published wheel for a familiar, paper-ready palette.
-- **Dual Aho-Corasick matching** — two automata are built at startup, one over fully
-  lemmatised dictionary entries (covers verb inflections) and one over particle-stripped
-  content forms (covers particle-omission variants such as 腹がたつ ↔ 腹たつ).
-  Both automata scan in a single O(n + k) pass per sentence.
-- **CVS (Contextual Valence Shifters)** — 108 Japanese negation patterns reverse
-  emotion polarity when applied (`嫌いではない` → positive, not negative).
-- **Three-state emotive distinction** — `analyze()` returns `emotive: bool` even when
-  no specific emotion word is detected, so callers can distinguish emotive-but-
-  unclassifiable sentences (e.g., interjections only) from fully non-emotive ones.
-
----
-
-## What's new in v0.5
-
-- **On-disk lemma cache** — second cold start is sub-millisecond
-  (~25 ms saved); MD5-invalidated, lives in `$XDG_CACHE_HOME/mlask_official/`.
-- **Optional UniDic backend** via fugashi:
-  `MLAskOfficial(backend="fugashi")` (install `mlask-official[fugashi]`).
-- **Optional GiNZA dependency-tree CVS** for long-distance negation:
-  `MLAskOfficial(use_dependency_cvs=True)` (install `mlask-official[deps]`).
-- **Fuzzy emoteme matching** — stretched-vowel input like `やばーーーい` is
-  normalised to `やばーい` before scanning.
-- **Modern dictionaries** — emoji (`😭` → aware, `🔥` → takaburi…), kaomoji
-  (`(T_T)`, `(>_<)`), gyaru-go / wasei-go (`ガチ`, `推し`, `草`), and katakana
-  borrowings (`ムカつく`, `ショック`, `テンション`) added per emotion class.
-- **`mlask` command-line interface** — `analyze`, `batch`, `benchmark`,
-  `extract` subcommands; stdin/stdout piping; JSON / CSV / pipe output formats.
-- **Streaming + multiprocessing APIs** — `analyze_stream(iterable)` for
-  memory-light corpus processing; `analyze_parallel()` and auto-on at
-  ≥ 50,000 sentences via the standard `analyze_batch()`.
-- **JA/EN language toggle** in the Streamlit app — UI strings and emotion
-  labels switch between English (`Yorokobi (joy)`) and Japanese (`喜び`).
-- **Time-series view** — timestamp-prefixed input (ISO date per line) renders
-  an emotion-prevalence-over-time chart in the batch tab.
-- **Mobile-responsive layout** — collapses side-by-side columns vertically
-  at narrow viewports.
-- **Packaging** — `CITATION.cff` and `conda-recipe/meta.yaml` shipped.
-
----
-
-## What's new in v0.4
-
-- **API rename** `orientation` → `valence` to match Russell's canonical terminology.
-  Breaking change; no alias.
-- **Batch tab fixed** — replaced `st.metric` (which fails with
-  `TypeError: Failed to fetch dynamically imported module …Metric.*.js`) with
-  static HTML KPI cards. The failure mode is now structurally impossible.
-- **Publication-quality visualisations** — Russell circumplex is square-aspect with
-  serif typography, sqrt-scaled markers, axis-unit labels; every chart now exposes a
-  PNG download button at 2× scale; batches >20 sentences render as an annotated
-  emotion × sentence heatmap instead of a hidden bar chart.
-- **CSV `emotive` column** simplified from three states (`yes`/`emotive_noclass`/`no`)
-  to binary `yes`/`no`.
-- App emoji and favicon: ❤️.
-- Concise sidebar; quick-example buttons moved below the input (full-width row).
-
-See `CHANGELOG.md` for the full history.
+- **Combined and expanded dictionaries** — Nakamura's original *Dictionary of
+  Emotive Expressions* merged with the Wang & Isomura (2024) two-dictionary
+  expansion (Hiejima's and Murakami's emotion dictionaries, plus automatically
+  extracted expressions).  Total: ~4,700 entries across 10 emotion classes,
+  augmented with modern internet language (emoji, kaomoji, gyaru-go, katakana
+  borrowings) per class.
+- **Russell's 2D circumplex model** of affect — every emotion class is placed
+  on a (valence, arousal) plane; aggregate sentence orientation is reported
+  as `valence` (POSITIVE / NEGATIVE / NEUTRAL, optionally `mostly_*`) and
+  `activation` (ACTIVE / PASSIVE / NEUTRAL).
+- **Plutchik-wheel colour palette** — all 10 emotion classes are colour-coded
+  by the hue angles of Plutchik's published wheel for a familiar,
+  paper-ready palette.
+- **Dual Aho-Corasick matching** — two automata are built at startup, one
+  over fully lemmatised dictionary entries (covers verb inflections) and one
+  over particle-stripped content forms (covers particle-omission variants
+  such as 腹がたつ ↔ 腹たつ).  Both automata scan in a single O(n + k) pass
+  per sentence; sustained throughput is ~50,000 sentences/sec on a single
+  core, ~100,000 sentences/sec on four.
+- **CVS (Contextual Valence Shifters)** — 108 Japanese negation patterns
+  reverse emotion polarity when applied (`嫌いではない` → positive, not
+  negative).  An optional GiNZA dependency-tree pass catches long-distance
+  negation that the local regex misses.
+- **Three-state emotive distinction** — `analyze()` returns `emotive: bool`
+  even when no specific emotion word is detected, so callers can distinguish
+  emotive-but-unclassifiable sentences (interjections / kaomoji only) from
+  fully non-emotive ones.
+- **Streaming + multiprocessing APIs** — `analyze_stream()` for
+  memory-light corpus processing; auto-parallel batches at ≥ 50,000 sentences.
+- **JA/EN Streamlit web app** with publication-quality charts (radar +
+  Russell 2D + time-series + heatmap), PNG export at 2× scale, and a
+  language toggle that flips all UI strings + emotion labels.
+- **On-disk lemma cache** — sub-millisecond warm-start once the cache is
+  primed; MD5-invalidated.
+- **Optional UniDic backend** via fugashi for users who prefer modern
+  morphological analysis.
 
 ---
 
 ## Emotion classes
 
-| Name       | English gloss | Valence | Arousal | Plutchik hue |
-|------------|--------------|---------|---------|-------------|
-| yorokobi   | joy          | POS     | ACT     | yellow      |
-| suki       | affection    | POS     | —       | yellow-green|
-| yasu       | relief       | POS     | PAS     | green-yellow|
-| takaburi   | excitement   | NorP    | ACT     | orange      |
-| odoroki    | surprise     | NorP    | ACT     | teal-cyan   |
-| haji       | shame        | NorP    | —       | rose-purple |
-| aware      | sadness      | NEG     | PAS     | royal blue  |
-| iya        | disgust      | NEG     | —       | dark orchid |
-| kowa       | fear         | NEG     | ACT     | green       |
-| ikari      | anger        | NEG     | ACT     | crimson     |
+| Name       | English gloss | Japanese | Valence | Arousal | Plutchik hue |
+|------------|--------------|----------|---------|---------|-------------|
+| yorokobi   | joy          | 喜び      | POS     | ACT     | yellow      |
+| suki       | affection    | 好き      | POS     | —       | yellow-green|
+| yasu       | relief       | 安らぎ    | POS     | PAS     | green-yellow|
+| takaburi   | excitement   | 昂り      | NorP    | ACT     | orange      |
+| odoroki    | surprise     | 驚き      | NorP    | ACT     | teal-cyan   |
+| haji       | shame        | 恥        | NorP    | —       | rose-purple |
+| aware      | sadness      | 哀しみ    | NEG     | PAS     | royal blue  |
+| iya        | disgust      | 嫌悪      | NEG     | —       | dark orchid |
+| kowa       | fear         | 恐れ      | NEG     | ACT     | green       |
+| ikari      | anger        | 怒り      | NEG     | ACT     | crimson     |
 
 ### Representative emotion
 
-For sentences where ML-Ask detects multiple emotion classes, the **representative
-emotion** is the single class chosen as the dominant one for the sentence. The
-heuristic — inherited from the original Perl ML-Ask — is:
+For sentences where ML-Ask detects multiple emotion classes, the
+**representative emotion** is the single class chosen as the dominant one for
+the sentence.  The heuristic — inherited from the original Perl ML-Ask — is:
 
 > *The class whose longest matched expression has the most characters.*
 
-For example, in *「腹がたって仕方ない、もう嫌だ」* both *ikari* (`腹が立つ`) and *iya*
-(`嫌だ`) match; *ikari* wins because `腹が立つ` is longer than `嫌だ`. The intuition
-is that longer dictionary entries are more specific — and therefore more diagnostic
-of the speaker's emotion — than shorter, more generic ones.
+For example, in *「腹がたって仕方ない、もう嫌だ」* both *ikari* (`腹が立つ`) and
+*iya* (`嫌だ`) match; *ikari* wins because `腹が立つ` is longer than `嫌だ`.
+The intuition is that longer dictionary entries are more specific — and
+therefore more diagnostic of the speaker's emotion — than shorter, more
+generic ones.
 
 Returned as `result["representative"] = (class_name, [matching_words])`.
 
@@ -170,9 +184,9 @@ Returned as `result["representative"] = (class_name, [matching_words])`.
 ## Installation
 
 ML-Ask Official runs on **Linux, macOS and Windows (WSL recommended)** with
-**Python 3.9 – 3.13**.  It depends on the [MeCab](https://taku910.github.io/mecab/)
-morphological analyser, which is a *system* package (not Python), so the install
-is split into two parts:
+**Python 3.10 – 3.13**.  It depends on the
+[MeCab](https://taku910.github.io/mecab/) morphological analyser, which is a
+*system* package (not Python), so the install is split into two parts:
 
 1. install MeCab + a Japanese dictionary at the OS level,
 2. install the `mlask-official` Python package inside a virtualenv.
@@ -215,14 +229,15 @@ sudo pacman -S mecab mecab-ipadic
 #### Windows
 
 Native Windows MeCab is fragile — **the recommended path is Windows Subsystem
-for Linux (WSL2)**: install Ubuntu under WSL and follow the Ubuntu instructions
-above.  If you must run on bare Windows, see the
-[mecab-python3 README](https://github.com/SamuraiT/mecab-python3#windows) for
-the MSVC build steps.
+for Linux (WSL2)**: install Ubuntu under WSL and follow the Ubuntu
+instructions above.  If you must run on bare Windows, see the
+[mecab-python3 README](https://github.com/SamuraiT/mecab-python3#windows)
+for the MSVC build steps.
 
 ### Step 2 — Create a Python virtual environment
 
-Strongly recommended (keeps mlask's dependencies out of your system Python):
+Strongly recommended (keeps the package's dependencies out of your system
+Python):
 
 ```bash
 python3 -m venv .venv
@@ -231,11 +246,11 @@ source .venv/bin/activate          # macOS / Linux
 # .venv\Scripts\Activate.ps1       # Windows PowerShell
 ```
 
-Make sure `python --version` reports 3.9 or newer.
+Make sure `python --version` reports 3.10 or newer.
 
 ### Step 3 — Install `mlask-official`
 
-#### From PyPI (once published)
+#### From PyPI
 
 ```bash
 pip install mlask-official            # core: analyzer + CLI
@@ -245,10 +260,11 @@ pip install 'mlask-official[deps]'    # + GiNZA dependency-tree CVS
 pip install 'mlask-official[all]'     # everything above
 ```
 
-#### From a source checkout (this folder)
+#### From a source checkout
 
 ```bash
-cd mlask-official_0.5
+git clone https://github.com/ptaszynski/mlask-official.git
+cd mlask-official
 pip install -e .                      # editable core install
 pip install -e '.[all]'               # editable + every extra
 ```
@@ -286,13 +302,19 @@ The pipe-format output should look like:
 
 #### Streamlit app
 
-```bash
-# From the source checkout
-bash run_app.sh                       # → http://localhost:8501
-bash run_app.sh --server.port 8505    # custom port
+The Streamlit application is part of the source repository.  Easiest way to
+try it is the hosted demo:
 
-# If you installed from PyPI
-streamlit run -m mlask_official.streamlit_app
+> **<https://mlask-official.streamlit.app/>**
+
+To run it locally, clone the repo and launch from there:
+
+```bash
+git clone https://github.com/ptaszynski/mlask-official.git
+cd mlask-official
+pip install -e '.[app]'
+bash run_app.sh                        # → http://localhost:8501
+bash run_app.sh --server.port 8505     # custom port
 ```
 
 Open the URL in your browser and try the *Quick examples* under the input box.
@@ -310,13 +332,14 @@ python -c "from mlask_official import MLAskOfficial; \
 print(MLAskOfficial(mecab_arg='-r /opt/homebrew/etc/mecabrc').analyze('嬉しい'))"
 ```
 
-Or pass `--mecab-arg "-r /opt/homebrew/etc/mecabrc"` to the CLI.  The Streamlit
-app has a *MeCab arguments* field in the sidebar for the same purpose.
+Or pass `--mecab-arg "-r /opt/homebrew/etc/mecabrc"` to the CLI.  The
+Streamlit app has a *MeCab arguments* field in the sidebar for the same
+purpose.
 
 **`No module named 'MeCab'`**
 
-`mecab-python3` failed to compile against your system MeCab.  Re-install with
-verbose output:
+`mecab-python3` failed to compile against your system MeCab.  Re-install
+with verbose output:
 
 ```bash
 pip install --force-reinstall --verbose mecab-python3
@@ -328,8 +351,15 @@ On macOS the most common cause is missing Xcode command-line tools
 **`No module named 'fugashi'` / `'spacy'`**
 
 Optional extras aren't installed.  Either disable the feature
-(`MLAskOfficial(backend="mecab", use_dependency_cvs=False)`) or install the
-relevant extra group from step 3.
+(`MLAskOfficial(backend="mecab", use_dependency_cvs=False)`) or install
+the relevant extra group from step 3.
+
+**`built an empty emotion index` / `Not an Aho-Corasick automaton yet`**
+
+MeCab returned no tokens for the shipped dictionary entries — usually a bad
+or mismatched dictionary path.  The error message lists the three most
+common causes and the fix for each.  See also the *Notes on tokenisation*
+section below.
 
 **Stale lemma cache after a manual dictionary edit**
 
@@ -359,8 +389,14 @@ print(r["activation"])    # 'ACTIVE'
 print(r["emotive"])       # True
 
 # Particle dropped — handled by content-lemma automaton
-r = a.analyze("腹たつ！")
-print(r["emotion"])       # {'ikari': ['腹が立つ≈']}
+#   (use the kanji form when possible — IPADIC's lemma for the kana
+#    writing `たつ` is the unrelated verb `経つ` "to elapse",
+#    so kana variants of ambiguous verbs may miss; see §Notes.)
+r = a.analyze("腹立つ！")
+print(r["emotion"])       # {'ikari': ['腹立ち', '腹立つ', '腹が立つ≈']}
+
+r = a.analyze("身の毛よだつ")          # particle が dropped
+print(r["emotion"])       # {'kowa': ['身の毛がよだつ≈']}
 
 # Negation via CVS
 r = a.analyze("彼のことは嫌いではない！")
@@ -378,19 +414,59 @@ print(r["emotion"])       # None
 print(r["emotive"])       # False
 ```
 
+### Streaming + parallel APIs
+
+```python
+# Generator — constant-memory for large corpora
+for result in a.analyze_stream(open("big_corpus.txt", encoding="utf-8")):
+    process(result)
+
+# Multiprocessing — auto-on for batches ≥ 50,000 sentences
+results = a.analyze_batch(texts)                 # auto: parallel iff len(texts) ≥ 50_000
+results = a.analyze_batch(texts, parallel=True,  # force on
+                          workers=8)
+```
+
+### Notes on tokenisation
+
+ML-Ask delegates tokenisation and lemmatisation to MeCab.  Two practical
+consequences worth knowing:
+
+* **Use IPADIC, not UniDic.**  The shipped dictionaries (Nakamura + Wang &
+  Isomura) were compiled against the IPADIC POS scheme.  UniDic tokenises
+  some compounds differently and won't kanji-normalise kana writings, which
+  reduces match coverage.  If you previously installed `unidic-lite` as a
+  side effect of another package, point MeCab back at IPADIC explicitly:
+
+  ```bash
+  brew install mecab-ipadic
+  # then either edit /opt/homebrew/etc/mecabrc to set
+  #     dicdir = /opt/homebrew/lib/mecab/dic/ipadic
+  # or pass -d per call:
+  MLAskOfficial(mecab_arg="-d /opt/homebrew/lib/mecab/dic/ipadic")
+  ```
+
+* **Kana writings of ambiguous verbs may miss.**  IPADIC's lemma table picks
+  the most frequent reading for a kana writing.  `たつ` in isolation
+  lemmatises to `経つ` ("to elapse"), not `立つ` ("to stand"), so a kana-only
+  input like `腹たつ` won't reach the `腹が立つ` dictionary entry even with
+  particle omission.  The same input written `腹立つ` or `腹が立つ` matches
+  cleanly.  Robust yomi/N-best parsing for these cases is tracked as
+  [IMPROVEMENTS.md §1.1 + §1.2](IMPROVEMENTS.md).
+
 ---
 
-## Command-line interface (v0.5)
+## Command-line interface
 
 ```bash
-# Single sentence (any of stdin, --text)
-echo "腹が立つ"               | mlask analyze --format pipe
-echo "彼のことは嫌いではない！" | mlask analyze --format json
+# Single sentence (stdin or --text)
+echo "腹が立つ"                  | mlask analyze --format pipe
+echo "彼のことは嫌いではない！"   | mlask analyze --format json
 
 # Batch a file
-mlask batch -i corpus.txt -o results.csv --format csv
+mlask batch -i corpus.txt -o results.csv  --format csv
 mlask batch -i corpus.txt -o results.json --format json --parallel
-mlask batch -i corpus.txt --format pipe > results.txt
+mlask batch -i corpus.txt                 --format pipe > results.txt
 
 # Throughput benchmark
 mlask benchmark --sentences 10000
@@ -400,17 +476,25 @@ mlask benchmark --sentences 100000 --parallel -j 8
 mlask extract corpus.txt --output candidates.tsv --min-freq 5
 ```
 
-All commands accept `--backend mecab|fugashi` and `--mecab-arg "-r /path/to/mecabrc"`.
+All commands accept `--backend mecab|fugashi` and
+`--mecab-arg "-r /path/to/mecabrc"`.
 
-## Run the Streamlit app
+---
 
-```bash
-bash run_app.sh                       # → http://localhost:8501
-bash run_app.sh --server.port 8505
-```
+## Performance
 
-Every chart in the app shows a small camera icon in its top-right corner — click it
-to download a 2× resolution PNG suitable for a paper figure.
+On Apple Silicon (Python 3.14, mecab-python3 + IPADIC):
+
+| Workload | Throughput |
+|---|---|
+| Cold start (no cache) | ~37 ms |
+| Warm start (cache hit) | ~17 ms |
+| Single sentence (steady-state) | 20 µs median, 46 µs p99 |
+| Sequential batch (10,000 sentences) | ~50,000 sentences/sec |
+| Multiprocessing batch (10,000 × 4 workers) | ~50,000 sentences/sec |
+| Auto-parallel `analyze_batch(50,000)` | ~100,000 sentences/sec |
+
+See [CHANGELOG.md](CHANGELOG.md) for full benchmark methodology.
 
 ---
 
@@ -419,8 +503,8 @@ to download a 2× resolution PNG suitable for a paper figure.
 When using ML-Ask in research, please cite both of the following:
 
 > Ptaszynski, M., Dybala, P., Rzepka, R., Araki, K., & Masui, F. (2017).
-> *ML-Ask: Open source affect analysis software for textual input in Japanese.*
-> Journal of Open Research Software, 5(1), 16-16.
+> *ML-Ask: Open source affect analysis software for textual input in
+> Japanese.* Journal of Open Research Software, 5(1), 16-16.
 
 ```bibtex
 @article{ptaszynski2017ml,
@@ -434,10 +518,10 @@ When using ML-Ask in research, please cite both of the following:
 }
 ```
 
-> Wang, L., Isomura, S., Ptaszynski, M., Dybala, P., Urabe, Y., Rzepka, R., &
-> Masui, F. (2024). *The limits of words: expanding a word-based emotion analysis
-> system with multiple emotion dictionaries and the automatic extraction of
-> emotive expressions.* Applied Sciences, 14(11), 4439.
+> Wang, L., Isomura, S., Ptaszynski, M., Dybala, P., Urabe, Y., Rzepka, R.,
+> & Masui, F. (2024). *The limits of words: expanding a word-based emotion
+> analysis system with multiple emotion dictionaries and the automatic
+> extraction of emotive expressions.* Applied Sciences, 14(11), 4439.
 
 ```bibtex
 @article{wang2024limits,
@@ -452,8 +536,29 @@ When using ML-Ask in research, please cite both of the following:
 }
 ```
 
+A machine-readable Citation File Format manifest is at
+[`CITATION.cff`](CITATION.cff).
+
+---
+
+## Contributing
+
+Issues, pull requests, and dictionary submissions are welcome at
+<https://github.com/ptaszynski/mlask-official>.  See [IMPROVEMENTS.md](IMPROVEMENTS.md)
+for the active roadmap; ❮ HIGH PRIORITY ❯ items are the best first
+contributions.
+
+When opening a PR that touches the emotion dictionaries (`mlask_official/emotions/*.txt`),
+please include:
+
+1. The source / rationale for each entry (paper, corpus reference, or
+   example sentence).
+2. Evidence that the entry doesn't collide with an existing class
+   (`mlask analyze --text "<entry>"` before and after).
+3. A note in [CHANGELOG.md](CHANGELOG.md) under an `[Unreleased]` section.
+
 ---
 
 ## License
 
-BSD 2-Clause.
+[BSD 3-Clause](LICENSE) — the same licence as the original ML-Ask system.

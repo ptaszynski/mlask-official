@@ -1,5 +1,7 @@
 [build-system]
-requires = ["setuptools>=68"]
+# PEP 639 (SPDX licence expressions) requires setuptools >= 77 for the
+# `license = "<SPDX>"` shorthand below.
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +9,11 @@ name = "mlask-official"
 version = "0.5.0"
 description = "ML-Ask Official — high-performance Japanese emotion analysis (original system, Python rewrite)"
 readme = "README.md"
-license = {text = "BSD-2-Clause"}
+# PEP 639: SPDX string + license-files glob, with NO `License ::` classifier.
+# (PyPI 2024+ rejects 400 Bad Request when both the licence metadata field and
+#  a deprecated `License ::` trove classifier appear together.)
+license = "BSD-3-Clause"
+license-files = ["LICENSE*"]
 authors = [
     {name = "Michal Ptaszynski", email = "ptaszynski@ieee.org"},
 ]
@@ -18,7 +24,6 @@ keywords = ["nlp", "japanese", "emotion", "sentiment", "affect", "ml-ask", "affe
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: BSD Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
