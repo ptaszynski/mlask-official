@@ -1,3 +1,53 @@
+Metadata-Version: 2.4
+Name: mlask-official
+Version: 0.5.0
+Summary: ML-Ask Official — high-performance Japanese emotion analysis (original system, Python rewrite)
+Author-email: Michal Ptaszynski <ptaszynski@ieee.org>
+Maintainer-email: Michal Ptaszynski <ptaszynski@ieee.org>
+License: BSD-2-Clause
+Project-URL: Homepage, https://github.com/michalptaszynski/mlask-official
+Project-URL: Bug Tracker, https://github.com/michalptaszynski/mlask-official/issues
+Project-URL: Changelog, https://github.com/michalptaszynski/mlask-official/blob/main/CHANGELOG.md
+Project-URL: Citation, https://github.com/michalptaszynski/mlask-official/blob/main/CITATION.cff
+Keywords: nlp,japanese,emotion,sentiment,affect,ml-ask,affective-computing
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: BSD Software License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Text Processing :: Linguistic
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Natural Language :: Japanese
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: mecab-python3>=1.0
+Requires-Dist: pyahocorasick>=2.0
+Requires-Dist: typer>=0.9
+Provides-Extra: app
+Requires-Dist: streamlit>=1.30; extra == "app"
+Requires-Dist: plotly>=5.0; extra == "app"
+Requires-Dist: pandas>=2.0; extra == "app"
+Provides-Extra: fugashi
+Requires-Dist: fugashi[unidic-lite]>=1.3; extra == "fugashi"
+Provides-Extra: deps
+Requires-Dist: ginza>=5.1; extra == "deps"
+Requires-Dist: ja-ginza>=5.1; extra == "deps"
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-benchmark; extra == "dev"
+Provides-Extra: all
+Requires-Dist: streamlit>=1.30; extra == "all"
+Requires-Dist: plotly>=5.0; extra == "all"
+Requires-Dist: pandas>=2.0; extra == "all"
+Requires-Dist: fugashi[unidic-lite]>=1.3; extra == "all"
+Requires-Dist: ginza>=5.1; extra == "all"
+Requires-Dist: ja-ginza>=5.1; extra == "all"
+
 # ML-Ask Official v0.5
 
 **eMotive eLement and Expression Analysis system — official Python rewrite**
@@ -309,14 +359,8 @@ print(r["activation"])    # 'ACTIVE'
 print(r["emotive"])       # True
 
 # Particle dropped — handled by content-lemma automaton
-#   (use the kanji form when possible — IPADIC's lemma for the
-#    kana writing `たつ` is the unrelated verb `経つ` "to elapse",
-#    so kana variants of ambiguous verbs may miss; see §Notes.)
-r = a.analyze("腹立つ！")
-print(r["emotion"])       # {'ikari': ['腹立ち', '腹立つ', '腹が立つ≈']}
-
-r = a.analyze("身の毛よだつ")          # particle が dropped
-print(r["emotion"])       # {'kowa': ['身の毛がよだつ≈']}
+r = a.analyze("腹たつ！")
+print(r["emotion"])       # {'ikari': ['腹が立つ≈']}
 
 # Negation via CVS
 r = a.analyze("彼のことは嫌いではない！")
@@ -333,33 +377,6 @@ r = a.analyze("今日は晴れです。")
 print(r["emotion"])       # None
 print(r["emotive"])       # False
 ```
-
-### Notes on tokenisation
-
-ML-Ask delegates tokenisation and lemmatisation to MeCab.  Two practical
-consequences worth knowing:
-
-* **Use IPADIC, not UniDic.**  The shipped dictionaries (Nakamura + Wang &
-  Isomura) were compiled against the IPADIC POS scheme.  UniDic tokenises
-  some compounds differently and won't kanji-normalise kana writings, which
-  reduces match coverage.  If you previously installed `unidic-lite` as a
-  side effect of another package, point MeCab back at IPADIC explicitly:
-
-  ```bash
-  brew install mecab-ipadic
-  # then either edit /opt/homebrew/etc/mecabrc to set
-  #     dicdir = /opt/homebrew/lib/mecab/dic/ipadic
-  # or pass -d per call:
-  MLAskOfficial(mecab_arg="-d /opt/homebrew/lib/mecab/dic/ipadic")
-  ```
-
-* **Kana writings of ambiguous verbs may miss.**  IPADIC's lemma table picks
-  the most frequent reading for a kana writing.  `たつ` in isolation
-  lemmatises to `経つ` ("to elapse"), not `立つ` ("to stand"), so a kana-only
-  input like `腹たつ` won't reach the `腹が立つ` dictionary entry even with
-  particle omission.  The same input written `腹立つ` or `腹が立つ` matches
-  cleanly.  Robust N-best parsing for these cases is tracked as
-  [IMPROVEMENTS.md §1.3](IMPROVEMENTS.md).
 
 ---
 

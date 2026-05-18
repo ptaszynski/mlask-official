@@ -1,0 +1,30 @@
+# Modern additions for yasu (relief)
+
+# --- Emoji ---
+😌
+😊
+😇
+🙏
+☮
+😴
+😪
+
+# --- Kaomoji ---
+(´-｀).｡oO
+( ˘ω˘ )
+( ˘ω˘ )ｽﾔｧ
+(´ω｀)
+( ˘▽˘)
+
+# --- Gyaru-go / wasei-go ---
+ホッとした
+ホッと
+癒される
+癒し
+まったり
+ほっこり
+
+# --- Katakana borrowings ---
+リラックス
+チル
+ヒーリング

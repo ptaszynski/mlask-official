@@ -1,0 +1,65 @@
+# ML-Ask Official v0.5 — modern additions for yorokobi (joy)
+# One entry per line.  Lines beginning with '#' are comments.
+# Sourced for: emoji, kaomoji, gyaru-go/wasei-go, katakana borrowings.
+# High-confidence mappings only — ambiguous items omitted.
+
+# --- Emoji (Unicode) ---
+😀
+😃
+😄
+😁
+😆
+😂
+🤣
+😊
+☺
+🙂
+😇
+🥰
+😻
+🎉
+🎊
+✨
+💫
+🌟
+⭐
+🥳
+😺
+😸
+👏
+🙌
+
+# --- Kaomoji ---
+(^o^)
+(^_^)
+(^▽^)
+(^▼^)
+(^∇^)
+＼(^o^)／
+\(^o^)/
+(*^_^*)
+(*^▽^*)
+(´∀｀)
+(・∀・)
+(￣▽￣)
+(o^^o)
+( ´ ▽ ` )ﾉ
+
+# --- Gyaru-go / wasei-go / internet slang ---
+草
+ｗｗｗ
+ｗｗ
+ｗ
+神
+最高
+ウケる
+ウケた
+ハッピー
+
+# --- Katakana borrowings ---
+ハッピー
+ラッキー
+グッド
+ナイス
+ベリーグッド
+ハイテンション

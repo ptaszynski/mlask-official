@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mlask-official"
+version = "0.5.0"
+description = "ML-Ask Official — high-performance Japanese emotion analysis (original system, Python rewrite)"
+readme = "README.md"
+license = {text = "BSD-2-Clause"}
+authors = [
+    {name = "Michal Ptaszynski", email = "ptaszynski@ieee.org"},
+]
+maintainers = [
+    {name = "Michal Ptaszynski", email = "ptaszynski@ieee.org"},
+]
+keywords = ["nlp", "japanese", "emotion", "sentiment", "affect", "ml-ask", "affective-computing"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Text Processing :: Linguistic",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Natural Language :: Japanese",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "mecab-python3>=1.0",
+    "pyahocorasick>=2.0",
+    "typer>=0.9",
+]
+
+[project.optional-dependencies]
+app = [
+    "streamlit>=1.30",
+    "plotly>=5.0",
+    "pandas>=2.0",
+]
+fugashi = [
+    "fugashi[unidic-lite]>=1.3",
+]
+deps = [
+    "ginza>=5.1",
+    "ja-ginza>=5.1",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-benchmark",
+]
+all = [
+    "streamlit>=1.30",
+    "plotly>=5.0",
+    "pandas>=2.0",
+    "fugashi[unidic-lite]>=1.3",
+    "ginza>=5.1",
+    "ja-ginza>=5.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/ptaszynski/mlask-official"
+"Bug Tracker" = "https://github.com/ptaszynski/mlask-official/issues"
+Changelog = "https://github.com/ptaszynski/mlask-official/blob/main/CHANGELOG.md"
+Citation = "https://github.com/ptaszynski/mlask-official/blob/main/CITATION.cff"
+
+[project.scripts]
+mlask = "mlask_official.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["mlask_official*"]
+
+[tool.setuptools.package-data]
+mlask_official = ["emotions/*.txt", "emotemes/*.txt"]

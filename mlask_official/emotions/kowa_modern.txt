@@ -1,0 +1,32 @@
+# Modern additions for kowa (fear)
+
+# --- Emoji ---
+😨
+😰
+😱
+😖
+😣
+😬
+🥶
+😟
+
+# --- Kaomoji ---
+((((;ﾟДﾟ))))
+(；ﾟдﾟ)
+(>_<)
+(>﹏<)
+( ;∀;)
+(ﾟдﾟ;)
+
+# --- Gyaru-go / wasei-go ---
+ガクブル
+ヒエッ
+ぞわぞわ
+こわっ
+やばたん
+
+# --- Katakana borrowings ---
+パニック
+ホラー
+スリル
+プレッシャー

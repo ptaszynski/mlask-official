@@ -1,0 +1,31 @@
+# Modern additions for iya (disgust)
+
+# --- Emoji ---
+🤢
+🤮
+😒
+🙄
+😑
+😖
+🤨
+
+# --- Kaomoji ---
+(；´Д｀)
+(´・ω・`)
+(´；ω；`)
+(◞‸◟)
+（°□°）
+
+# --- Gyaru-go / wasei-go ---
+キモい
+キモッ
+無理ゲー
+ありえん
+ありえない
+だるい
+ダル
+
+# --- Katakana borrowings ---
+キモい
+グロい
+シュール

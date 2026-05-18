@@ -1,0 +1,52 @@
+# Modern additions for suki (affection)
+# Emoji, kaomoji, gyaru-go, katakana
+
+# --- Emoji ---
+❤
+❤️
+🧡
+💛
+💚
+💙
+💜
+🤎
+🖤
+🤍
+💖
+💗
+💓
+💞
+💕
+💘
+💝
+💟
+😍
+🥰
+😘
+😗
+😙
+😚
+🤗
+
+# --- Kaomoji ---
+(♡´∀｀♡)
+(*´ω｀*)
+(*´∀｀*)
+(=^･ω･^=)
+
+# --- Gyaru-go / wasei-go ---
+推し
+神
+尊い
+萌え
+マブダチ
+ラブ
+ラブラブ
+ラブい
+胸キュン
+
+# --- Katakana borrowings ---
+ラブ
+ラブリー
+キュート
+スイート
